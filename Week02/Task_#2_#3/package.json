@@ -1,0 +1,15 @@
+{
+  "name": "task_02_in_assignment_week_02",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "TheAnhPham",
+  "license": "ISC",
+  "dependencies": {
+    "date-fns": "^2.0.0-alpha.27",
+    "xlsx": "^0.14.3"
+  }
+}

@@ -1,0 +1,11 @@
+{
+  "name": "task_1_in_assignment_week_2",
+  "version": "1.0.0",
+  "description": "this is a task in assignment week 2 of nodejs basic course",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "TheAnhPham",
+  "license": "ISC"
+}
