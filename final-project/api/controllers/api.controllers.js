@@ -110,7 +110,9 @@ exports.getUsers = async (req, res) => {
 exports.getUser = async (req, res) => {
   try {
     var user = await UserModel.findById(req.params.id).exec()
-    res.send(user)
+    {user && res.send(user)};
+    {!user && res.send("user is not exits")}
+
   } catch (err) {
     res.status(500).send(err)
   }
@@ -120,6 +122,7 @@ exports.updateEntirelyUser = async (req, res) => {
   try {
     let user = await UserModel.findById(req.params.id).exec()
     user.set(req.body);
+    console.log(user)
     var result = await user.save();
     res.send(result);
   } catch (err) {

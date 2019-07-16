@@ -3,113 +3,180 @@ const categoryModel = require('../models/category')
 const userModel = require('../models/user')
 
 exports.getAdminPage = (req, res) => {
-  const promiseCountProduct = productModel.count()
-  const promiseCountCategory = categoryModel.count()
-  const promiseCountUser = userModel.count()
+  if (req.session.authenticated) {
+    const promiseCountProduct = productModel.count()
+    const promiseCountCategory = categoryModel.count()
+    const promiseCountUser = userModel.count()
 
-  Promise.all([
-    promiseCountProduct,
-    promiseCountCategory,
-    promiseCountUser,
-  ]).then(results => {
-    const [productCount, categoryCount, userCount] = results
-    res.render('admin', {
-      productsTotal: productCount,
-      categoriesTotal: categoryCount,
-      usersTotal: userCount,
-      ordersTotal: 0,
+    Promise.all([
+      promiseCountProduct,
+      promiseCountCategory,
+      promiseCountUser,
+    ]).then(results => {
+      const [productCount, categoryCount, userCount] = results
+      res.render('admin', {
+        productsTotal: productCount,
+        categoriesTotal: categoryCount,
+        usersTotal: userCount,
+        ordersTotal: 0,
+        userName: req.session.name,
+        userAvatar: req.session.avatar,
+      })
     })
-  })
+  } else {
+    res.redirect('/')
+  }
 }
 
 exports.getProductsPage = (req, res) => {
-  productModel.find().then(products => {
-    res.render('products', {
-      products: products,
+  if (req.session.authenticated) {
+    productModel.find().then(products => {
+      res.render('products', {
+        products: products,
+        userName: req.session.name,
+        userAvatar: req.session.avatar,
+      })
     })
-  })
+  } else {
+    res.redirect('/')
+  }
 }
 
 exports.getCategoriesPage = (req, res) => {
-  categoryModel.find().then(categories => {
-    res.render('categories', {
-      categories: categories,
+  if (req.session.authenticated) {
+    categoryModel.find().then(categories => {
+      res.render('categories', {
+        categories: categories,
+        userName: req.session.name,
+        userAvatar: req.session.avatar,
+      })
     })
-  })
+  } else {
+    res.redirect('/')
+  }
 }
 
 exports.getUsersPage = (req, res) => {
-  userModel.find().then(users => {
-    res.render('users', {
-      users: users,
+  if (req.session.authenticated) {
+    userModel.find().then(users => {
+      res.render('users', {
+        users: users,
+        userName: req.session.name,
+        userAvatar: req.session.avatar,
+      })
     })
-  })
+  } else {
+    res.redirect('/')
+  }
 }
 
 exports.getProductCreatePage = (req, res) => {
-  res.render('productCreate')
+  if (req.session.authenticated) {
+    res.render('productCreate', {
+      userName: req.session.name,
+      userAvatar: req.session.avatar,
+    })
+  } else {
+    res.redirect('/')
+  }
 }
 
 exports.updateProduct = (req, res) => {
-  productModel
-    .update(req.body)
-    .where('_id')
-    .equals(req.params.id)
-    .exec()
-    .then(() => {
-      res.redirect(`/admin/products/${req.params.id}`)
-    })
+  if (req.session.authenticated) {
+    productModel
+      .update(req.body)
+      .where('_id')
+      .equals(req.params.id)
+      .exec()
+      .then(() => {
+        res.redirect(`/admin/products/${req.params.id}`, {
+          userName: req.session.name,
+          userAvatar: req.session.avatar,
+        })
+      })
+  } else {
+    res.redirect('/')
+  }
 }
 
 exports.deleteProduct = (req, res) => {
-  productModel
-    .deleteOne()
-    .where('_id')
-    .equals(req.params.id)
-    .exec()
-    .then(() => {
-      res.redirect('/admin/products')
-    })
+  if (req.session.authenticated) {
+    productModel
+      .deleteOne()
+      .where('_id')
+      .equals(req.params.id)
+      .exec()
+      .then(() => {
+        res.redirect('/admin/products', {
+          userName: req.session.name,
+          userAvatar: req.session.avatar,
+        })
+      })
+  } else {
+    res.redirect('/')
+  }
 }
 
 exports.createNewProduct = (req, res) => {
-  console.log(req.file)
-  const productDetails = req.body
-  productDetails.thumbnail = req.file.originalname
-  productDetails.image = req.file.originalname
+  if (req.session.authenticated) {
+    const productDetails = req.body
+    productDetails.thumbnail = req.file.originalname
+    productDetails.image = req.file.originalname
 
-  productModel.create(productDetails).then(() => {
-    res.redirect('/admin/products')
-  })
+    productModel.create(productDetails).then(() => {
+      res.redirect('/admin/products', {
+        userName: req.session.name,
+        userAvatar: req.session.avatar,
+      })
+    })
+  } else {
+    res.redirect('/')
+  }
 }
 
 exports.getProductDetails = (req, res) => {
-  productModel
-    .findOne({})
-    .where('_id')
-    .equals(req.params.id)
-    .exec()
-    .then(product => {
-      res.render('productDetails', {
-        product: product,
+  if (req.session.authenticated) {
+    productModel
+      .findOne({})
+      .where('_id')
+      .equals(req.params.id)
+      .exec()
+      .then(product => {
+        res.render('productDetails', {
+          product: product,
+          userName: req.session.name,
+          userAvatar: req.session.avatar,
+        })
       })
-    })
+  } else {
+    res.redirect('/')
+  }
 }
 
 exports.getUserDetails = (req, res) => {
-  userModel
-    .findOne({})
-    .where('_id')
-    .equals(req.params.id)
-    .exec()
-    .then(user => {
-      res.render('usersDetails', {
-        user: user,
+  if (req.session.authenticated) {
+    userModel
+      .findOne({})
+      .where('_id')
+      .equals(req.params.id)
+      .exec()
+      .then(user => {
+        res.render('usersDetails', {
+          user: user,
+          userName: req.session.name,
+          userAvatar: req.session.avatar,
+        })
       })
-    })
+  } else {
+    res.redirect('/')
+  }
 }
 
 exports.logout = (req, res) => {
-  req.session.authenticated = false
-  res.redirect('/')
+  if (req.session.authenticated) {
+    req.session.authenticated = false
+    res.redirect('/')
+  } else {
+    res.redirect('/')
+  }
 }
